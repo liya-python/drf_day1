@@ -6,8 +6,10 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework.request import Request
 from app1.models import User
+from rest_framework.renderers import BrowsableAPIRenderer,JSONRenderer
+from rest_framework.parsers import JSONParser
 
 '''
 Django的视图模式分为两种
@@ -126,10 +128,32 @@ class EmployeeView(View):
 
 class UserAPIView(APIView):
 
-    def get(self, request, *args, **kwargs):
-        print("这是drf的get请求")
+    # 为某个类单独指定渲染器
+    # 局部的渲染器比全局的优先级要高
+
+    renderer_classes = (JSONRenderer,) # 元组
+
+    # 指定此视图接收的参数类型
+    parser_classes = [JSONParser]
+
+    def get(self, request, *args, **kwargs): # DRF类视图中的request对象是经过封装后的request对象
+        # 通过django原生的request对象来获取参数
+        # 如果要访问django原生的request对象，可以通过_request来访问
+        print(request._request.GET.get('username')) # 不推荐 了解即可
+
+        # 可以通过DRF的request对象获取参数
+        print(request.GET.get('username'))
+        # 可以通过 query_params来获取参数 DRF扩展的方法
+        print(request.query_params.get('username'))
+        # 获取路径传参
+        user_id = kwargs.get('id')
         return Response("DRF GET OK")
 
     def post(self, request, *args, **kwargs):
-        print("这是drf的post请求")
+
+        # post 请求传递参数的形式 form_data www-urlencoded json
+        print(request._request.POST,'3') #django原生的request对象 json拿不到
+        print(request.POST,'2') #DRF封装后的request对象 json拿不到
+        # DRF扩展的请求参数 兼容性最强 可以接受任意类型的参数
+        print(request.data,'1')
         return Response("DRF POST OK")
