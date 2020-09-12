@@ -133,8 +133,8 @@ REST_FRAMEWORK = {
     ],
     # 配置全局的解析器
     'DEFAULT_PARSER_CLASSES': [
-        # 'rest_framework.parsers.JSONParser', # json解析器
-        # 'rest_framework.parsers.FormParser', # www-url-encode
+        'rest_framework.parsers.JSONParser', # json解析器
+        'rest_framework.parsers.FormParser', # www-url-encode
         'rest_framework.parsers.MultiPartParser' # 表单解析器 form-data
     ],
     # 默认的全局异常处理的方法
